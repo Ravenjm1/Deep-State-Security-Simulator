@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using TMPro;
 
-public class CarController : NetworkBehaviour
+public class Car : NetworkBehaviour
 {
     float moveSpeed = 5f;
     Vector3 waitingPosition = Vector3.zero; // Центр сцены
@@ -24,8 +24,8 @@ public class CarController : NetworkBehaviour
     [SerializeField] private List<Transform> contrabandSpawnPoints;
 
     private Vector3 cancelPoint = new Vector3(-10f, 0, 0);
-    private Vector3 passPoint = new Vector3(10f, 0, 0);
-
+    private Vector3 passPoint = new Vector3(20f, 0, 0);
+    private bool isComing = false;
     [SyncVar] private bool isWaiting = false; // Синхронизируем состояние "ожидания" между клиентами
     private Vector3 targetPosition;
     private bool decided = false;
@@ -95,17 +95,17 @@ public class CarController : NetworkBehaviour
             }
         }
     }
-
+    [Server]
     void Update()
     {
         IsMoving = false;
 
-        if (!isWaiting)
+        if (!isWaiting && isComing)
         {
             MoveToWaitingPosition();
             IsMoving = true;
         }
-        if (isServer && decided && passed)
+        if (decided && passed)
         {
             if (Vector3.Distance(transform.position, targetPosition) > 0.1f)
             {
@@ -190,11 +190,17 @@ public class CarController : NetworkBehaviour
         if (!passed)
         {
             _explosion.Explode();
+            if (isServer)
+            {
+                spawner.RemoveCar();
+            }
         }
-        if (isServer)
-        {
-            spawner.RemoveCar();
-        }
+        
     }
 
+    [Server]
+    public void AllowToCome()
+    {
+        isComing = true;
+    }
 }

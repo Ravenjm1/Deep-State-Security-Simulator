@@ -4,7 +4,7 @@ using Random = UnityEngine.Random;
 
 public class TruckMoveAnimation : MonoBehaviour
 {
-    [SerializeField] private CarController _carController;
+    [SerializeField] private Car _carController;
     [SerializeField] private Transform _base;
 
     [SerializeField] private Transform[] _wheels;

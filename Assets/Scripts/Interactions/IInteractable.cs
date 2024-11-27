@@ -5,4 +5,4 @@ public interface IInteractable
     public bool IsActive() => true;
 }
 
-public enum InteractionType { NOONE, GRAB, LOOKAT }
+public enum InteractionType { NOONE, GRAB, LOOKAT, SWITCH }

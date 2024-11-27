@@ -27,7 +27,7 @@ public class Enemy : NetworkBehaviour
     LayerMask obstacleMask;     // Маска для проверки препятствий
 
     float attackRange = 2.5f;     // Дистанция атаки
-    float attackDamage = 1f;   // Урон
+    float attackDamage = 3f;   // Урон
     float attackCooldown = 0.5f;  // Время между атаками
 
     private float maxHealth = 100f;

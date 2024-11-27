@@ -9,9 +9,10 @@ public class PlayerMovement : NetworkBehaviour
     private Transform cameraTransform;
     private Vector3 playerVelocity;
     private bool groundedPlayer;
-    private float speed = 5.0f;
+    private float speed = 4.0f;
+    private float sprintSpeed = 6f;
     float airControlFactor = 0.5f; // Коэффициент управления в воздухе
-    private float jumpHeight = 1.5f;
+    private float jumpHeight = 1.2f;
     private float checkJumpTime = 0.2f; // Время на чек прыжка
     private float checkJump;
     float fallGravityMultiplier = 1.0f;  // Ускорение падения
@@ -39,15 +40,15 @@ public class PlayerMovement : NetworkBehaviour
         {
             playerVelocity.y = 0f;
         }
-
         Vector2 movement = InputManager.Instance.GetPlayerMovement();
         Vector3 move = new Vector3(movement.x, 0f, movement.y);
+        float currentSpeed = InputManager.Instance.GetSprint()? sprintSpeed : speed;
         if (!groundedPlayer) {
             move.x *= airControlFactor;
         }
         move = cameraTransform.forward * move.z + cameraTransform.right * move.x;
         move.y = 0f;
-        controller.Move(move * Time.deltaTime * speed);
+        controller.Move(move * Time.deltaTime * currentSpeed);
         
         if (_animator) {
             _animator.MoveAnimation(move.magnitude);

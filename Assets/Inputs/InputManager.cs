@@ -47,6 +47,7 @@ public class InputManager : MonoBehaviour
     public Vector2 GetPlayerMovement() => Input.Player.Move.ReadValue<Vector2>();
     public Vector2 GetMouseDelta() => Input.Player.Look.ReadValue<Vector2>();
 
+    public bool GetSprint() => Input.Player.Sprint.ReadValue<float>() > 0f;
     public bool GetJumped() => Input.Player.Jump.triggered;
     private void InteractionPressed() => OnInteraction();
     private void DropPressed() => OnDrop();

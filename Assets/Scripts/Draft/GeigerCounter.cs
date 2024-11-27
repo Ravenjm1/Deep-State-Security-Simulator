@@ -22,7 +22,7 @@ public class GeigerCounter : NetworkBehaviour
         }
         visualText.text = "0";
 
-        var carController = FindFirstObjectByType<CarController>();
+        var carController = FindFirstObjectByType<Car>();
         if (carController != null)
         {
             person = carController.person;

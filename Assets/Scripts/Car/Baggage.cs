@@ -19,7 +19,7 @@ public class Baggage : NetworkBehaviour
     {
         // Когда объект появляется на клиенте, сразу применяем цвет
         GetComponent<Renderer>().material.color = itemColor;
-        transform.SetParent(FindFirstObjectByType<CarController>().transform);
+        transform.SetParent(FindFirstObjectByType<Car>().transform);
     }
     
     void FixedUpdate()

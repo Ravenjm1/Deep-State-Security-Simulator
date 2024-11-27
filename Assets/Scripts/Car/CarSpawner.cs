@@ -18,35 +18,31 @@ public class CarSpawner : NetworkBehaviour
         {
             currentCar = Instantiate(carPrefab, spawnPoint.position, Quaternion.identity);
             NetworkServer.Spawn(currentCar); // Синхронизируем спавн машины для всех игроков
-            currentCar.GetComponent<CarController>().spawner = this;
+            currentCar.GetComponent<Car>().spawner = this;
         }
     }
 
     [Server]
     public void RemoveCar()
     {
-        var carСontroller = currentCar.GetComponent<CarController>();
-        var idCard = carСontroller.idCard;
+        var carController = currentCar.GetComponent<Car>();
         var person = GetPerson();
-        bool result;
-        if ((carСontroller.passed && !person.lier)
-        || (!carСontroller.passed && person.lier))
-        {
-            
-            result = true;
-        }
-        else 
-        {
-            result = false;
-        }
-        locationManager.Result(result, person);
+        
+        // Логика определения результата
+        bool result = carController.passed != person.lier;
 
-        NetworkServer.Destroy(idCard);
+        // Удаление объектов через NetworkServer
+        NetworkServer.Destroy(carController.idCard);
         NetworkServer.Destroy(currentCar);
-        if (carСontroller.enemy)
-            carСontroller.enemy.GetComponent<Enemy>().Kill();
-            
+
+        // Уничтожение врага, если он есть
+        carController.enemy?.GetComponent<Enemy>()?.Kill();
+        
+        // Сброс текущей машины
         currentCar = null;
+
+        // Отправка результата в LocationManager
+        locationManager.Result(result, person);
     }
 
     public GameObject GetCar()
@@ -54,7 +50,7 @@ public class CarSpawner : NetworkBehaviour
         return currentCar;
     }
 
-    public Person GetPerson() => currentCar.GetComponent<CarController>().GetPerson();
+    public Person GetPerson() => currentCar.GetComponent<Car>().GetPerson();
 
     // Метод для обработки "Пропуска"
     [Server]
@@ -62,7 +58,7 @@ public class CarSpawner : NetworkBehaviour
     {
         if (currentCar != null)
         {
-            var carController = currentCar.GetComponent<CarController>();
+            var carController = currentCar.GetComponent<Car>();
             if (carController != null)
             {
                 Debug.Log("CurrentCarPass");
@@ -77,11 +73,25 @@ public class CarSpawner : NetworkBehaviour
     {
         if (currentCar != null)
         {
-            var carController = currentCar.GetComponent<CarController>();
+            var carController = currentCar.GetComponent<Car>();
             if (carController != null)
             {
                 carController.CmdReject(); // Машина движется назад
             }
+        }
+    }
+
+    public void AllowToCome()
+    {
+        CmdAllowToCome();
+    }
+
+    [Command (requiresAuthority = false)]
+    void CmdAllowToCome()
+    {
+        if (currentCar != null)
+        {
+            currentCar.GetComponent<Car>().AllowToCome();
         }
     }
 }

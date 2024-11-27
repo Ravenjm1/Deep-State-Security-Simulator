@@ -16,7 +16,7 @@ public class LocationManager : NetworkBehaviour
     private float timeToSpawnCar = 1f;
     private float visualTime = 0;
     [SyncVar] private float time = 0;
-    [SyncVar] private int quota;
+    [SyncVar] private int quota = 100;
     [SyncVar] private int gold = 0;
     [SyncVar] private bool inited = false;
 
@@ -28,7 +28,9 @@ public class LocationManager : NetworkBehaviour
     void Init()
     {
         inited = true;
-        quota = LobbyStat.Instance.Quota;
+        if (LobbyStat.Instance != null) {
+            quota = LobbyStat.Instance.Quota;
+        }
         time = setTime;
         visualTime = time;
         carSpawner.SpawnCar();
@@ -52,21 +54,20 @@ public class LocationManager : NetworkBehaviour
 
         if (isServer)
         {
-            if (time > 0)
-            {
-                time -= Time.deltaTime;
-            }
-            else 
-            {
-                inited = false;
-                var networkManager = (MyNetworkManager)NetworkManager.singleton;
-                RpcReachQuota((gold >= quota)? true : false);
-                networkManager.ServerChangeScene(networkManager.lobbyScene);
-            }
+            time = Mathf.Max(time - Time.deltaTime, 0f);
         }
         visualTime = Math.Abs(time - visualTime) >= 5? time : visualTime;
         timeText.text = string.Format("{0}:{1:00}", (int)(visualTime / 60), (int)(visualTime % 60));
         quotaText.text = gold + " / " + quota;
+    }
+
+    [Server]
+    void EndDay()
+    {
+        inited = false;
+        var networkManager = (MyNetworkManager)NetworkManager.singleton;
+        RpcReachQuota((gold >= quota)? true : false);
+        networkManager.ServerChangeScene(networkManager.lobbyScene);
     }
 
     [ClientRpc]
@@ -74,16 +75,24 @@ public class LocationManager : NetworkBehaviour
     {
         LobbyStat.Instance.RichQuota = isReached;
     }
-
-    private IEnumerator WaitForNewCar()
-    {
-        yield return new WaitForSeconds(timeToSpawnCar);;
-        carSpawner.SpawnCar();
-        checkboxListManager.InitCheckboxes();
-    }
     
     [Server]
     public void Result(bool result, Person person)
+    {
+        if (time > 0)
+        {
+            carSpawner.SpawnCar();
+            checkboxListManager.InitCheckboxes();
+        }
+        else 
+        {
+            EndDay();
+        }
+
+        ShowResult(result, person);
+    }
+
+    void ShowResult(bool result, Person person)
     {
         var showText = "";
         var badText = "";
@@ -147,11 +156,8 @@ public class LocationManager : NetworkBehaviour
             }
         }
 
-        StartCoroutine(WaitForNewCar());
-
         RpcShowResult(result, showText, badText);
     }
-
 
     [ClientRpc]
     private void RpcShowResult(bool result, string goldText, string badText)
