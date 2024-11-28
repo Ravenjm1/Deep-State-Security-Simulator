@@ -71,7 +71,7 @@ public class GrabObject : NetworkBehaviour, IInteractable
     }
 
     [Command (requiresAuthority = false)]
-    private void CmdGrab(NetworkIdentity player)
+    public void CmdGrab(NetworkIdentity player)
     {
         if (!_isGrabbed)
         {

@@ -2007,11 +2007,11 @@ Transform:
   m_GameObject: {fileID: 707079630}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -34.13, y: 0, z: 0}
+  m_LocalPosition: {x: -25, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1414127644}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &707348553
 GameObject:
@@ -2131,6 +2131,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6894251d52a406a42bd090dfd83aa85d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onAnimationEndCalled:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 742689714}
+        m_TargetAssemblyTypeName: Switcher, Assembly-CSharp
+        m_MethodName: SwitchOff
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1290748558}
+        m_TargetAssemblyTypeName: TruckDoor, Assembly-CSharp
+        m_MethodName: Interact
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &742689714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2161,6 +2188,18 @@ MonoBehaviour:
       - m_Target: {fileID: 742689713}
         m_TargetAssemblyTypeName: LeverAnimator, Assembly-CSharp
         m_MethodName: PlayLeverAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1290748558}
+        m_TargetAssemblyTypeName: TruckDoor, Assembly-CSharp
+        m_MethodName: Interact
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4324,6 +4363,24 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: f8db701362943374e9374f8421febe2d, type: 2}
   m_BuildHeightMesh: 0
+--- !u!1 &1290748557 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4803381691498967496, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+  m_PrefabInstance: {fileID: 1772998767}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1290748558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290748557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55aebb6cebb619249bd34202cf9d0828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _openRotation: {x: -60, y: 0, z: 0}
 --- !u!1 &1384704178
 GameObject:
   m_ObjectHideFlags: 0
@@ -4491,7 +4548,6 @@ Transform:
   m_Children:
   - {fileID: 928516205}
   - {fileID: 917415075}
-  - {fileID: 707079631}
   - {fileID: 587945682}
   - {fileID: 1947963336}
   - {fileID: 530101090}
@@ -5234,6 +5290,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2015274890010707369, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.486
+      objectReference: {fileID: 0}
+    - target: {fileID: 2015274890010707369, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.19
+      objectReference: {fileID: 0}
     - target: {fileID: 2730243676428039020, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -16.5
@@ -5261,6 +5325,22 @@ PrefabInstance:
     - target: {fileID: 2730243676428039020, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 2957409790682088108, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.486
+      objectReference: {fileID: 0}
+    - target: {fileID: 2957409790682088108, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.3967
+      objectReference: {fileID: 0}
+    - target: {fileID: 3615115696981545058, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.486
+      objectReference: {fileID: 0}
+    - target: {fileID: 3615115696981545058, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.7767999
       objectReference: {fileID: 0}
     - target: {fileID: 4067365205919427764, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5306,10 +5386,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enviroment
       objectReference: {fileID: 0}
+    - target: {fileID: 6732194615096941821, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6732194615096941821, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6732194615096941821, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6732194615096941821, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6732194615096941821, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 270
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4803381691498967496, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1290748558}
   m_SourcePrefab: {fileID: 100100000, guid: bd5decc4ba493e9449205af7a475ead6, type: 3}
 --- !u!1 &1782862264
 GameObject:
@@ -7114,6 +7217,7 @@ SceneRoots:
   - {fileID: 1414127644}
   - {fileID: 243678354}
   - {fileID: 198447470}
+  - {fileID: 707079631}
   - {fileID: 1173832797}
   - {fileID: 4744106303331399594}
   - {fileID: 1976476427844992801}

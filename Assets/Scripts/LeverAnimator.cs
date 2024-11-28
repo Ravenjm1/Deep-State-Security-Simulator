@@ -1,15 +1,16 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LeverAnimator : MonoBehaviour
 {
     private Animator animator;
-    private Switcher switcher;
+
+    public UnityEvent onAnimationEndCalled;
     private bool isAnimationPlaying = false;
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        switcher = GetComponent<Switcher>();
         SetToStartFrame(); // Устанавливаем анимацию на начальный кадр
     }
 
@@ -34,11 +35,11 @@ public class LeverAnimator : MonoBehaviour
     private System.Collections.IEnumerator ResetToIdleAfterAnimation()
     {
         // Ждём, пока анимации завершатся
-        yield return new WaitForSeconds(GetAnimationLength("Po_Bo|Level_Down") + GetAnimationLength("Po_Bo|Level_Down"));
+        yield return new WaitForSeconds(5);//GetAnimationLength("Po_Bo|Level_Down") + GetAnimationLength("Po_Bo|Level_Down"));
 
         // Сбрасываем в исходное состояние
         isAnimationPlaying = false;
-        switcher.SwitchOff();
+        onAnimationEndCalled.Invoke();
     }
 
     private float GetAnimationLength(string animationName)

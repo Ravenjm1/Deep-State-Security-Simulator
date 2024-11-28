@@ -13,6 +13,7 @@ public class Car : NetworkBehaviour
     Vector3 waitingPosition = Vector3.zero; // Центр сцены
     [NonSerialized] public CarSpawner spawner;
     private PersonGenerator personGenerator;
+    private Driver driver;
     public Transform IdCardSpawner;
     public GameObject idCard;
     public Transform itemSpawner;
@@ -39,6 +40,10 @@ public class Car : NetworkBehaviour
 
     private int chanceToSpawnEnemy = 0;
 
+    void Awake()
+    {
+        driver = GetComponentInChildren<Driver>();
+    }
     void Start()
     {
         _explosion = GetComponent<CarExplosion>();
@@ -126,8 +131,6 @@ public class Car : NetworkBehaviour
         {
             isWaiting = true; // Машина достигла центра и ждёт действия
 
-            SpawnIdCard();
-
             if (person.lier && Chance.Check(50))
             {
                 StartCoroutine(ChanceToSpawnEnemy());
@@ -135,10 +138,10 @@ public class Car : NetworkBehaviour
         }
     }
     [Server]
-    void SpawnIdCard()
+    public GameObject SpawnIdCard()
     {
         // Создаем объект idCard
-        idCard = Instantiate(personGenerator.IdCardPrefab, IdCardSpawner.position, Quaternion.identity);
+        idCard = Instantiate(personGenerator.IdCardPrefab, driver.transform);
 
         // Получаем компонент Personality и устанавливаем данные Person
         Personality personality = idCard.GetComponent<Personality>();
@@ -146,6 +149,8 @@ public class Car : NetworkBehaviour
 
         // Спавним объект
         NetworkServer.Spawn(idCard);
+
+        return idCard;
     }
 
     private IEnumerator ChanceToSpawnEnemy()

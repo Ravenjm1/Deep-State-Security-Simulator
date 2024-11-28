@@ -6,6 +6,13 @@ public class TruckDoor : MonoBehaviour, IInteractable
     [SerializeField] private Vector3 _openRotation;
     private float _interactionTime;
     private bool _isOpened;
+    private Quaternion _quaternion;
+
+    void Awake()
+    {
+        _quaternion = transform.localRotation;
+        Debug.Log("_rotation: " + _quaternion);
+    }
     
     public void Interact()
     {
@@ -22,12 +29,12 @@ public class TruckDoor : MonoBehaviour, IInteractable
         if (_isOpened)
         {
             transform.localRotation =
-                Quaternion.Slerp(transform.localRotation, Quaternion.Euler(_openRotation), Time.deltaTime * 8f);
+                Quaternion.Slerp(transform.localRotation, Quaternion.Euler(_quaternion.eulerAngles +_openRotation), Time.deltaTime * 8f);
         }
         else
         {
             transform.localRotation =
-                Quaternion.Slerp(transform.localRotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 8f);
+                Quaternion.Slerp(transform.localRotation, _quaternion, Time.deltaTime * 8f);
         }
     }
 

@@ -44,6 +44,11 @@ public class PlayerInventory : NetworkBehaviour
         return -1;
     }
 
+    public GrabObject GetItem()
+    {
+        return inventory[0];
+    }
+
     public void AddItemToInventory(GrabObject item)
     {
         // Проверяем, есть ли место в инвентаре
