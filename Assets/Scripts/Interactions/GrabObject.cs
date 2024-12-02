@@ -76,8 +76,11 @@ public class GrabObject : NetworkBehaviour, IInteractable
         if (!_isGrabbed)
         {
             _isGrabbed = true;
-            _rigidbody.isKinematic = true;
-            _boxCollider.enabled = false;
+            if (_rigidbody)
+            {
+                _rigidbody.isKinematic = true;
+                _boxCollider.enabled = false;
+            }
             
             grabber = player.GetComponent<PlayerController>();
             grabberHands = grabber.Hands.Center.gameObject;
@@ -98,8 +101,11 @@ public class GrabObject : NetworkBehaviour, IInteractable
         if (_isGrabbed)
         {
             _isGrabbed = false;
-            _rigidbody.isKinematic = false;
-            _boxCollider.enabled = true;
+            if (_rigidbody)
+            {
+                _rigidbody.isKinematic = false;
+                _boxCollider.enabled = true;
+            }
             RpcDrop();
         }
     } 

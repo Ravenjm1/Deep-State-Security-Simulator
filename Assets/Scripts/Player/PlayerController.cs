@@ -1,11 +1,8 @@
 using UnityEngine;
 using Mirror;
-using UnityEngine.SceneManagement;
-using Unity.Cinemachine;
-using System;
-using Mirror.Examples.Basic;
 using TMPro;
 using Steamworks;
+using System;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -13,176 +10,224 @@ public class PlayerController : NetworkBehaviour
     [field: SerializeField] public PlayerHands Hands { get; private set; }
     [field: SerializeField] public GameObject Model { get; private set; }
     [field: SerializeField] public TMP_Text TmpNickname { get; private set; }
+    [SerializeField] private GameObject _corpsePrefab;
+    private GameObject _corpseObj;
+    private Animator animator;
 
     private CameraManager cameraManager;
     public PlayerStats Stats { get; private set; }
     public PlayerMovement Movement { get; private set; }
     public PlayerUI UI { get; private set; }
-    
-    public IPlayerState CurrentState { get; private set; }
-    public BaseState BaseStateInstance { get; private set; } = new BaseState();
-    public LookAtState LookAtStateInstance { get; private set; } = new LookAtState();
-    public DeadState DeadStateInstance { get; private set; } = new DeadState();
 
-    [SyncVar] string nickname = "";
-    
+    private State currentState;
+    private LookAtObject currentLookAtObject;
+
+    [SyncVar] private string nickname = "";
+
+    private enum State
+    {
+        Base,
+        LookAt,
+        Dead
+    }
+
+    void Awake()
+    {
+        Stats = GetComponent<PlayerStats>();
+        Movement = GetComponent<PlayerMovement>();
+        UI = FindAnyObjectByType<PlayerUI>();
+        animator = GetComponentInChildren<Animator>();
+
+        cameraManager = FindAnyObjectByType<CameraManager>();
+        cameraManager.AssignCameraFollow(this);
+    }
+
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
 
-        Stats = GetComponent<PlayerStats>();
-        Movement = GetComponent<PlayerMovement>();
-        UI = FindAnyObjectByType<PlayerUI>();
-
-        cameraManager = FindAnyObjectByType<CameraManager>();
-        cameraManager.AssignCameraFollow(this); 
         Model.SetActive(false);
-        
-        // Начальное состояние игрока
-        BaseStateInstance.Player = this;
-        LookAtStateInstance.Player = this;
-        DeadStateInstance.Player = this;
-
-        CurrentState = BaseStateInstance;
-        CurrentState.EnterState();
+        currentState = State.Base;
 
         // Проверяем, инициализирован ли Steam API
         if (SteamManager.Initialized)
         {
-            // Получаем ник текущего игрока
             nickname = SteamFriends.GetPersonaName();
         }
     }
 
+    void Start()
+    {
+        Stats.OnDead += OnDead;
+        Stats.OnResurect += OnResurect;
+    }
+
     void Update()
     {
-        if (isLocalPlayer) 
+        if (isLocalPlayer)
         {
-            // Обновляем текущее состояние
-            CurrentState.UpdateState();
+            switch (currentState)
+            {
+                case State.Base:
+                    HandleBaseState();
+                    break;
+                case State.LookAt:
+                    HandleLookAtState();
+                    break;
+                case State.Dead:
+                    HandleDeadState();
+                    break;
+            }
         }
-        else 
+        else
         {
             TmpNickname.text = nickname;
         }
     }
 
-    public void SwitchState(IPlayerState newState)
+    private void OnDead()
     {
-        CurrentState.ExitState();
-        CurrentState = newState;
-        CurrentState.EnterState();
+        if (isLocalPlayer)
+        {
+            SwitchToDeadState();
+        }
+        else 
+        {
+            Model.SetActive(false); 
+        }
+        if (isServer)
+        {
+            _corpseObj = Instantiate(_corpsePrefab, Model.transform.position, Quaternion.identity);
+            NetworkServer.Spawn(_corpseObj);
+        }
+    }
+
+    private void OnResurect()
+    {
+        if (isLocalPlayer)
+        {
+            SwitchToBaseState();
+        }
+        else
+        {
+            Model.SetActive(true);
+        }
+        if (isServer)
+        {
+            NetworkServer.Destroy(_corpseObj);
+        }
+    }
+
+    public void SwitchToBaseState()
+    {
+        ExitCurrentState();
+        currentState = State.Base;
+        EnterBaseState();
+    }
+
+    public void SwitchToLookAtState(LookAtObject lookAtObject)
+    {
+        ExitCurrentState();
+        currentLookAtObject = lookAtObject;
+        currentState = State.LookAt;
+        EnterLookAtState();
+    }
+
+    public void SwitchToDeadState()
+    {
+        ExitCurrentState();
+        currentState = State.Dead;
+        EnterDeadState();
+    }
+
+    private void ExitCurrentState()
+    {
+        switch (currentState)
+        {
+            case State.Base:
+                ExitBaseState();
+                break;
+            case State.LookAt:
+                ExitLookAtState();
+                break;
+            case State.Dead:
+                ExitDeadState();
+                break;
+        }
+    }
+
+    // === Base State ===
+    private void EnterBaseState()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void HandleBaseState()
+    {
+        // do...
+    }
+
+    private void ExitBaseState()
+    {
+        // Действия при выходе из BaseState
+    }
+
+    // === LookAt State ===
+    private void EnterLookAtState()
+    {
+        Movement.enabled = false;
+        Cursor.lockState = CursorLockMode.Confined;
+        InputManager.Instance.OnInteraction += InteractWithObject;
+        UI.ChangeRenderUI(false);
+    }
+
+    private void HandleLookAtState()
+    {
+        // do...
+    }
+
+    private void ExitLookAtState()
+    {
+        Movement.enabled = true;
+        currentLookAtObject?.StopLooking();
+        InputManager.Instance.OnInteraction -= InteractWithObject;
+        UI.ChangeRenderUI(true);
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void InteractWithObject()
+    {
+        SwitchToBaseState();
+    }
+
+    // === Dead State ===
+    private void EnterDeadState()
+    {
+        GetComponent<CharacterController>().enabled = false;
+        Movement.enabled = false;
+        UI.ChangeRenderUI(false);
+    }
+
+    private void HandleDeadState()
+    {
+        // do...
+    }
+
+    private void ExitDeadState()
+    {
+        transform.position = new Vector3(0f, 2f, 0f); // Перемещаем игрока
+        GetComponent<CharacterController>().enabled = true;
+        Movement.enabled = true;
+        UI.ChangeRenderUI(true);
     }
 
     public bool TryToLookAt(LookAtObject lookAtObject)
     {
-        if (CurrentState == BaseStateInstance)
+        if (currentState == State.Base)
         {
-            LookAtStateInstance.lookAtObject = lookAtObject;
-            SwitchState(LookAtStateInstance);
+            SwitchToLookAtState(lookAtObject);
             return true;
         }
         return false;
     }
-
-    public void SetRotationZ(float zAngle)
-    {
-        Vector3 currentRotation = transform.eulerAngles;
-        currentRotation.z = zAngle;
-        transform.eulerAngles = currentRotation;
-    }
 }
-
-public interface IPlayerState
-{
-    public PlayerController Player { get; set; }
-    void EnterState();
-    void UpdateState();
-    void ExitState();
-}
-
-public class BaseState : IPlayerState
-{
-    public PlayerController Player { get; set; }
-    public void EnterState()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-    }
-
-    public void UpdateState()
-    {
-        if (Player.Stats.IsDead) // Проверка на смерть
-        {
-            Player.SwitchState(Player.DeadStateInstance);
-        }
-    }
-
-    public void ExitState()
-    {
-        // Действия при выходе из состояния
-    }
-}
-
-public class LookAtState : IPlayerState
-{
-    public PlayerController Player { get; set; }
-    public LookAtObject lookAtObject;
-    public void EnterState()
-    {
-        Player.Movement.enabled = false;
-        Cursor.lockState = CursorLockMode.Confined;
-        InputManager.Instance.OnInteraction += Interact;
-        Player.UI.ChangeRenderUI(false);
-    }
-
-    void Interact()
-    {
-        Player.SwitchState(Player.BaseStateInstance);
-    }
-
-    public void UpdateState()
-    {
-        if (Player.Stats.IsDead) // Проверка на смерть
-        {
-            Player.SwitchState(Player.DeadStateInstance);
-        }
-    }
-
-    public void ExitState()
-    {
-        // Скрываем курсор при выходе из состояния
-        Cursor.lockState = CursorLockMode.Locked;
-        Player.Movement.enabled = true;
-        lookAtObject.StopLooking();
-        InputManager.Instance.OnInteraction -= Interact;
-        Player.UI.ChangeRenderUI(true);
-    }
-}
-
-public class DeadState : IPlayerState
-{
-    public PlayerController Player { get; set; }
-    public void EnterState()
-    {
-        Player.Movement.enabled = false;
-        Player.SetRotationZ(90);
-        Player.UI.ChangeRenderUI(false);
-    }
-
-    public void UpdateState()
-    {
-        if (!Player.Stats.IsDead) // Респавн игрока
-        {
-            Player.transform.position = new Vector3(0f, 2f, 0f); // Перемещаем в координаты 0,0
-            Player.SwitchState(Player.BaseStateInstance);
-        }
-    }
-
-    public void ExitState()
-    {
-        Player.Movement.enabled = true;
-        Player.SetRotationZ(0);
-        Player.UI.ChangeRenderUI(true);
-    }
-}
-

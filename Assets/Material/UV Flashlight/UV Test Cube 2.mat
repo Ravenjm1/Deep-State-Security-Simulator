@@ -47,7 +47,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _LightDirection: {r: 0.059821267, g: -0.0000009704285, b: -0.9982091, a: 0}
+    - _LightDirection: {r: 0.059821267, g: -0.0000009700454, b: -0.9982091, a: 0}
     - _LightPosition: {r: 1.4154024, g: 0.11461314, b: 6.633757, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

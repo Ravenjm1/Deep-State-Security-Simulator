@@ -2,12 +2,14 @@ using UnityEngine;
 using Mirror;
 using System;
 using TMPro;
+using Unity.VisualScripting;
 
 public class CarSpawner : NetworkBehaviour
 {
     public GameObject carPrefab;
     public Transform spawnPoint;
     [SerializeField] LocationManager locationManager;
+    [SerializeField] BoxCollider explosionCollider;
 
     [NonSerialized] public GameObject currentCar;
 
@@ -34,9 +36,6 @@ public class CarSpawner : NetworkBehaviour
         // Удаление объектов через NetworkServer
         NetworkServer.Destroy(carController.idCard);
         NetworkServer.Destroy(currentCar);
-
-        // Уничтожение врага, если он есть
-        carController.enemy?.GetComponent<Enemy>()?.Kill();
         
         // Сброс текущей машины
         currentCar = null;
@@ -73,12 +72,38 @@ public class CarSpawner : NetworkBehaviour
     {
         if (currentCar != null)
         {
+            ExplosionCar();
+
             var carController = currentCar.GetComponent<Car>();
-            if (carController != null)
+            carController.CmdReject(); // Машина взрывается
+        }
+    }
+
+    [ClientRpc]
+    void ExplosionCar()
+    {
+        var player = LocationContext.GetDependency.Player;
+        if (IsObjectInsideBox(player.transform.position, explosionCollider))
+        {
+            player.Stats.GetDamage(100);
+        }
+        if (isServer)
+        {
+            var enemies = FindObjectsByType(typeof(Enemy), FindObjectsSortMode.None);
+            foreach (var enemyObj in enemies)
             {
-                carController.CmdReject(); // Машина движется назад
+                var enemy = enemyObj.GetComponent<Enemy>();
+                if (IsObjectInsideBox(enemy.transform.position, explosionCollider))
+                {
+                    enemy.Kill();
+                }
             }
         }
+    }
+
+    private bool IsObjectInsideBox(Vector3 objectPosition, BoxCollider box)
+    {
+        return box.bounds.Contains(objectPosition);
     }
 
     public void AllowToCome()

@@ -8,10 +8,12 @@ public class PlayerStats : NetworkBehaviour
     public float MaxHp {get; private set; } = 10f;
     public float Hp {get; private set; }
     private PlayerMovement playerMovement;
-    public bool IsDead {get; private set; }
+    [SyncVar (hook=nameof(OnDeadChange))] public bool IsDead;
 
     public event Action OnDead = delegate {  };
     public event Action OnResurect = delegate { };
+
+    private float respawnTime = 3;
 
     void Awake()
     {
@@ -44,15 +46,25 @@ public class PlayerStats : NetworkBehaviour
         if (!IsDead) 
         {
             IsDead = true;
-            
-            OnDead();
             StartCoroutine(Respawn());
+        }
+    }
+    // For all clients
+    void OnDeadChange(bool oldDead, bool newDead)
+    {
+        if (newDead) 
+        {
+            OnDead();
+        }
+        else
+        {
+            OnResurect();
         }
     }
 
     IEnumerator Respawn()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(respawnTime);
 
         Resurect();
     }
@@ -63,7 +75,6 @@ public class PlayerStats : NetworkBehaviour
         {
             Hp = MaxHp;
             IsDead = false;
-            OnResurect();
         }
     }
 }

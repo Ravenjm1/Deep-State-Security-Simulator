@@ -11,7 +11,6 @@ public class TruckDoor : MonoBehaviour, IInteractable
     void Awake()
     {
         _quaternion = transform.localRotation;
-        Debug.Log("_rotation: " + _quaternion);
     }
     
     public void Interact()
