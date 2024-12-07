@@ -41,10 +41,16 @@ public class LobbyStat : MonoBehaviour
     {
         if (scene.name == "LobbyScene")
         {
-            QuotaUp();
-
             if (RichQuota != null)
             {
+                if (RichQuota == true)
+                {
+                    QuotaUp();
+                }
+                else
+                {
+                    Quota = 50;
+                }
                 ShowResult((bool)RichQuota);
             }
                 

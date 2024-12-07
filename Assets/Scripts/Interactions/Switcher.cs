@@ -21,4 +21,6 @@ public class Switcher : MonoBehaviour, IInteractable
     public bool IsActive() => !switched;
 
     public InteractionType Type() => InteractionType.SWITCH;
+
+    public string GetInteractText() => "Switch on";
 }

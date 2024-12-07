@@ -1,3 +1,4 @@
+using System.Collections;
 using Mirror;
 using UnityEngine;
 
@@ -5,7 +6,8 @@ public class Driver : NetworkBehaviour, IInteractable
 {
     private Car car;
     private bool gave;
-    GameObject idCard;
+    [SyncVar (hook=nameof(OnIdCardSet))] GrabObject idCard;
+    [SerializeField] private Transform _hand;
 
     void Awake()
     {
@@ -14,10 +16,16 @@ public class Driver : NetworkBehaviour, IInteractable
     [Server]
     void Start()
     {
-        idCard = car.SpawnIdCard();
+        idCard = car.SpawnIdCard().GetComponent<GrabObject>();
+    }
+
+    void OnIdCardSet(GrabObject oldVar, GrabObject newidCard)
+    {
+        newidCard.GrabNpc(_hand);
     }
 
     public bool IsActive() => (!gave || CheckItem(NetworkClient.localPlayer))? true : false;
+    public string GetInteractText() => !gave? "Take Id card" : "Give back";
     public void Interact()
     {
         CmdGiveIdCard(NetworkClient.localPlayer);
@@ -29,20 +37,25 @@ public class Driver : NetworkBehaviour, IInteractable
         if (!gave)
         {
             gave = true;
-            idCard.GetComponent<GrabObject>().CmdGrab(player);
+            idCard.Drop();
+            idCard.CmdGrab(player);
         }
         else
         {
             var playerInventory = player.GetComponentInChildren<PlayerInventory>();
-            var itemSlot = playerInventory.GetItem();
             if (CheckItem(player))
             {
                 playerInventory.DropItem(0);
-                itemSlot.transform.SetParent(transform);
-                itemSlot.transform.localPosition = new Vector3(0f, 0f, 0f);
-                gave = false;
+                StartCoroutine(WaitToGrabNpc());
             }
         }
+    }
+
+    IEnumerator WaitToGrabNpc()
+    {
+        yield return new WaitForSeconds(0.1f);
+        idCard.GrabNpc(_hand);
+        gave = false;
     }
 
     bool CheckItem(NetworkIdentity player)
@@ -50,7 +63,7 @@ public class Driver : NetworkBehaviour, IInteractable
         var playerInventory = player.GetComponentInChildren<PlayerInventory>();
         var itemSlot = playerInventory.GetItem();
 
-        return itemSlot != null && itemSlot.gameObject == idCard;
+        return itemSlot != null && itemSlot == idCard;
     }
     
 }

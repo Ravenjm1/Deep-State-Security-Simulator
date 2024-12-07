@@ -38,4 +38,5 @@ public class TruckDoor : MonoBehaviour, IInteractable
     }
 
     public bool IsActive() => _interactionTime <= 0;
+    public string GetInteractText() => "Open";
 }

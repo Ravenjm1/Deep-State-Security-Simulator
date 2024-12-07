@@ -28,4 +28,5 @@ public class LookAtObject : MonoBehaviour, IInteractable
     public bool IsActive() => !IsLookedAt;
 
     public InteractionType Type() => InteractionType.LOOKAT;
+    public string GetInteractText() => "Look";
 }

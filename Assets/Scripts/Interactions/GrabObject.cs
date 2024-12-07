@@ -7,7 +7,7 @@ public class GrabObject : NetworkBehaviour, IInteractable
     private Rigidbody _rigidbody;
     BoxCollider _boxCollider;
     PlayerController grabber;
-    GameObject grabberHands;
+    Transform grabberHands;
     [SyncVar] private bool _isGrabbed;
     [SyncVar] private NetworkIdentity ownerIdentity;
     private Vector3 targetLookAtPosition;
@@ -21,6 +21,8 @@ public class GrabObject : NetworkBehaviour, IInteractable
         _boxCollider = GetComponent<BoxCollider>();
         interactLayer = LayerMask.NameToLayer("Interact"); // Слой по умолчанию
         inventoryLayer = LayerMask.NameToLayer("InventoryLayer"); // Слой для объектов в инвентаре
+
+        gameObject.AddComponent<OutlineInteract>();
     }
 
     void Update()
@@ -83,15 +85,34 @@ public class GrabObject : NetworkBehaviour, IInteractable
             }
             
             grabber = player.GetComponent<PlayerController>();
-            grabberHands = grabber.Hands.Center.gameObject;
 
-            transform.SetParent(grabberHands.transform);
-            transform.localPosition = Vector3.zero; // Устанавливаем начальное положение
-            transform.localRotation = Quaternion.Euler(0, 180, 0);
+            SetGrabbed(grabber.Hands.Center);
 
             RpcSetOwner(player);
             // Локаем интеракцию у клиента
             TargetGrab(player.connectionToClient, player);
+        }
+    }
+
+    void SetGrabbed(Transform grabTransform)
+    {
+        grabberHands = grabTransform;
+        transform.SetParent(grabberHands);
+        transform.localPosition = Vector3.zero; // Устанавливаем начальное положение
+        transform.localRotation = Quaternion.Euler(0, 180, 0);
+    }
+
+    public void GrabNpc(Transform grabTransform)
+    {
+        if (!_isGrabbed)
+        {
+            _isGrabbed = true;
+            if (_rigidbody)
+            {
+                _rigidbody.isKinematic = true;
+                _boxCollider.enabled = false;
+            }
+            SetGrabbed(grabTransform);
         }
     }
 
@@ -114,10 +135,7 @@ public class GrabObject : NetworkBehaviour, IInteractable
     void RpcSetOwner(NetworkIdentity player)
     {
         grabber = player.GetComponent<PlayerController>();
-        grabberHands = grabber.Hands.Center.gameObject;
-
-        transform.SetParent(grabberHands.transform);
-        transform.localPosition = Vector3.zero; // Устанавливаем начальное положение
+        SetGrabbed(grabber.Hands.Center); // Устанавливаем начальное положение
     }
 
     [TargetRpc]
@@ -144,4 +162,5 @@ public class GrabObject : NetworkBehaviour, IInteractable
 
     public InteractionType Type() => InteractionType.GRAB;
     public bool IsActive() => !_isGrabbed;
+    public string GetInteractText() => "Take";
 }
