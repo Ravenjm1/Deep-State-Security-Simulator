@@ -29,7 +29,7 @@ public class InteractionUI : MonoBehaviour
 
     private void ShowInteraction()
     {
-        _interactionText.text = "E - " + _playerInteractor.GetInteractionObject().GetInteractText();
+        _interactionText.text = _playerInteractor.GetInteractionObject().GetInteractText();
         if (_interactionUI.activeSelf == false) 
             _interactionUI.SetActive(true);
     }

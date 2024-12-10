@@ -55,7 +55,7 @@ public class PanelDecide : NetworkBehaviour
     [Server]
     IEnumerator ExplosionCar()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
 
         RpcExplosion();
         carSpawner.CurrentCarCancel();

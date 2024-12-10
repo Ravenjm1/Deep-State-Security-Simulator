@@ -1,5 +1,6 @@
 using System;
 using Mirror;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,7 @@ public class PersonCheckbox : NetworkBehaviour
     public CheckboxState CurrentState = CheckboxState.Default;
     private Toggle toggle;
     private Image backgroundImage;
-    private Text labelText;
+    private TMP_Text labelText;
     private Color defaultColor = Color.white;
     private Color approvedColor = Color.green;
     private Color cancelColor = Color.red;
@@ -30,7 +31,7 @@ public class PersonCheckbox : NetworkBehaviour
         checkboxListManager = FindFirstObjectByType<CheckboxListManager>(); 
         toggle = GetComponent<Toggle>();
         backgroundImage = GetComponentInChildren<Image>();
-        labelText = GetComponentInChildren<Text>();
+        labelText = GetComponentInChildren<TMP_Text>();
 
         transform.SetParent(checkboxListManager.checkboxContainer.transform);
         checkboxUI = checkboxListManager.AddCheckboxUI();
@@ -45,7 +46,7 @@ public class PersonCheckbox : NetworkBehaviour
     {
         labelText.text = newLabel;
         
-        checkboxUI.GetComponentInChildren<Text>().text = newLabel;
+        checkboxUI.GetComponentInChildren<TMP_Text>().text = newLabel;
     }
     public void OnToggleClick()
     {

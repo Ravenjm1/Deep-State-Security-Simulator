@@ -11,6 +11,11 @@ public class OutlineInteract : MonoBehaviour
         outline.enabled = false;
     }
 
+    public void SetVisibleMode()
+    {
+        outline.OutlineMode = Outline.Mode.OutlineVisible;
+    }
+
     public void EnableOutline()
     {
         outline.enabled = true;

@@ -6,6 +6,9 @@ public class TruckBack : MonoBehaviour, IInteractable
 {
     private float _interactionTime;
     private bool _isOpened;
+    private OutlineInteract _outline;
+
+    void Awake() => _outline = gameObject.AddComponent<OutlineInteract>();
     
     public void Interact()
     {
@@ -33,4 +36,7 @@ public class TruckBack : MonoBehaviour, IInteractable
 
     public bool IsActive() => _interactionTime <= 0;
     public string GetInteractText() => "Open";
+
+    public void Hover() => _outline.EnableOutline();
+    public void Unhover() => _outline.DisableOutline();
 }

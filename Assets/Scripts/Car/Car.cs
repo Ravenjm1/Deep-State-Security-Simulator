@@ -172,6 +172,7 @@ public class Car : NetworkBehaviour
         {
             decided = true;
             passed = true;
+            targetPosition = passed? passPoint : cancelPoint;
             RpcDecide(true);
         }
     }
@@ -191,7 +192,7 @@ public class Car : NetworkBehaviour
     {
         decided = true;
         passed = _passed;
-        targetPosition = passed? passPoint : cancelPoint;
+        
         if (!passed)
         {
             _explosion.Explode();

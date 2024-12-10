@@ -4,6 +4,8 @@ public interface IInteractable
     public InteractionType Type() => InteractionType.NOONE;
     public bool IsActive() => true;
     public string GetInteractText() => "Interact";
+    public void Hover();
+    public void Unhover();
 }
 
 public enum InteractionType { NOONE, GRAB, LOOKAT, SWITCH }

@@ -70,17 +70,17 @@ public class CarSpawner : NetworkBehaviour
     [Server]
     public void CurrentCarCancel()
     {
+        RpcExplosion();
+
         if (currentCar != null)
         {
-            ExplosionCar();
-
             var carController = currentCar.GetComponent<Car>();
             carController.CmdReject(); // Машина взрывается
         }
     }
 
     [ClientRpc]
-    void ExplosionCar()
+    void RpcExplosion()
     {
         var player = LocationContext.GetDependency.Player;
         if (IsObjectInsideBox(player.transform.position, explosionCollider))

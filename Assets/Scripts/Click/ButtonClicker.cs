@@ -8,14 +8,16 @@ public class ButtonClicker : MonoBehaviour, IClickable
     private Renderer buttonRenderer;
     public Color highlightColor = Color.yellow;
     public Color originalColor;
-    // UnityEvent позволяет вам закидывать методы через инспектор
     public UnityEvent onClickCalled;
     Vector3 pressedScale = new Vector3(0.9f, 0.9f, 0.9f);
+    private OutlineInteract _outline;
     void Start()
     {
         originalScale = transform.localScale;
         buttonRenderer = GetComponent<Renderer>();
         originalColor = buttonRenderer.material.color;
+        _outline = gameObject.AddComponent<OutlineInteract>();
+        _outline.SetVisibleMode();
     }
 
     public void Pressed()
@@ -30,23 +32,8 @@ public class ButtonClicker : MonoBehaviour, IClickable
         transform.localScale = originalScale;
     }
 
-    public void Hover()
-    {
-        // Выделение кнопки при наведении
-        if (buttonRenderer != null)
-        {
-            buttonRenderer.material.color = highlightColor;
-        }
-    }
-
-    public void Unhover()
-    {
-        // Снятие выделения кнопки при уходе курсора
-        if (buttonRenderer != null)
-        {
-            buttonRenderer.material.color = originalColor;
-        }
-    }
+    public void Hover() => _outline.EnableOutline();
+    public void Unhover() => _outline.DisableOutline();
 
     public bool IsActive()
     {

@@ -8,6 +8,9 @@ public class LookAtObject : MonoBehaviour, IInteractable
     public bool IsLookedAt {get; private set; }
     public event Action OnStartLook = delegate {  };
     public event Action OnStopLook = delegate {  };
+    private OutlineInteract _outline;
+
+    void Awake() => _outline = gameObject.AddComponent<OutlineInteract>();
     public void Interact()
     {
         if (LocationContext.GetDependency.Player.TryToLookAt(this))
@@ -17,7 +20,6 @@ public class LookAtObject : MonoBehaviour, IInteractable
             OnStartLook();
         }
     }
-
     public void StopLooking()
     {
         IsLookedAt = false;
@@ -29,4 +31,6 @@ public class LookAtObject : MonoBehaviour, IInteractable
 
     public InteractionType Type() => InteractionType.LOOKAT;
     public string GetInteractText() => "Look";
+    public void Hover() => _outline.EnableOutline();
+    public void Unhover() => _outline.DisableOutline();
 }

@@ -1,22 +1,30 @@
+using Mirror;
 using UnityEngine;
 
 [SelectionBase]
-public class TruckDoor : MonoBehaviour, IInteractable
+public class TruckDoor : NetworkBehaviour, IInteractable
 {
     [SerializeField] private Vector3 _openRotation;
     private float _interactionTime;
-    private bool _isOpened;
+    [SyncVar] private bool _isOpened;
     private Quaternion _quaternion;
+    private OutlineInteract _outline;
 
     void Awake()
     {
         _quaternion = transform.localRotation;
+        _outline = gameObject.AddComponent<OutlineInteract>();
     }
     
     public void Interact()
     {
         _interactionTime = 1f;
-        
+        CmdInteract();
+    }
+
+    [Command (requiresAuthority = false)]
+    void CmdInteract()
+    {
         _isOpened = !_isOpened;
     }
 
@@ -39,4 +47,6 @@ public class TruckDoor : MonoBehaviour, IInteractable
 
     public bool IsActive() => _interactionTime <= 0;
     public string GetInteractText() => "Open";
+    public void Hover() => _outline.EnableOutline();
+    public void Unhover() => _outline.DisableOutline();
 }

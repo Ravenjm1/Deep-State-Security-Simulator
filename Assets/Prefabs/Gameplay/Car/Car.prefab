@@ -919,6 +919,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55aebb6cebb619249bd34202cf9d0828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   _openRotation: {x: 0, y: 0, z: 70}
 --- !u!1 &3239879074487602626
 GameObject:
@@ -1151,7 +1154,6 @@ GameObject:
   - component: {fileID: 8080872138348784646}
   - component: {fileID: 520844580873375400}
   - component: {fileID: 2980948467064354391}
-  - component: {fileID: 574619889317922980}
   m_Layer: 6
   m_Name: Driver
   m_TagString: Untagged
@@ -1267,18 +1269,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _hand: {fileID: 305030491401395951}
---- !u!114 &574619889317922980
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3431386866578489164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd79bfd5e3fc5640b13cf58f4b36e78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &3519438331671159420
 GameObject:
   m_ObjectHideFlags: 0
@@ -1464,6 +1454,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55aebb6cebb619249bd34202cf9d0828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   _openRotation: {x: 0, y: 0, z: -75}
 --- !u!1 &4159120213606717549
 GameObject:
@@ -1619,7 +1612,6 @@ GameObject:
   - component: {fileID: 1927014177718587993}
   - component: {fileID: 4813706673202111287}
   - component: {fileID: 1159002328313496698}
-  - component: {fileID: 7237687104422631411}
   m_Layer: 6
   m_Name: Front Bonnet
   m_TagString: Untagged
@@ -1676,19 +1668,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55aebb6cebb619249bd34202cf9d0828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   _openRotation: {x: 0, y: -60, z: 0}
---- !u!114 &7237687104422631411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4496858967269394916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd79bfd5e3fc5640b13cf58f4b36e78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4498428351828258369
 GameObject:
   m_ObjectHideFlags: 0
@@ -1700,7 +1683,6 @@ GameObject:
   - component: {fileID: 1087353053719409497}
   - component: {fileID: 3769505033874536506}
   - component: {fileID: 6294898068669934782}
-  - component: {fileID: 8920127745323968550}
   m_Layer: 6
   m_Name: BackDoor
   m_TagString: Untagged
@@ -1756,18 +1738,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cef8b8123a190b748b35062474028bc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8920127745323968550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4498428351828258369}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd79bfd5e3fc5640b13cf58f4b36e78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4543634074831171210

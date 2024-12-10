@@ -18,24 +18,24 @@ public class CheckboxListManager : NetworkBehaviour
     {
         CheckboxText = new Dictionary<(Person.LieType, PersonCheckbox.CheckboxState), string>
         {
-            {(Person.LieType.IdCard, PersonCheckbox.CheckboxState.Default), "Id карта" },
-            {(Person.LieType.IdCard, PersonCheckbox.CheckboxState.Decline), "Id карта фейковая" },
+            {(Person.LieType.IdCard, PersonCheckbox.CheckboxState.Default), "Id card" },
+            {(Person.LieType.IdCard, PersonCheckbox.CheckboxState.Decline), "Id card is fake" },
             {(Person.LieType.IdCard, PersonCheckbox.CheckboxState.Approved), "Id карта проверена" },
 
-            {(Person.LieType.LicensePlate, PersonCheckbox.CheckboxState.Default), "Номера машины" },
-            {(Person.LieType.LicensePlate, PersonCheckbox.CheckboxState.Decline), "Номера угнаны" },
+            {(Person.LieType.LicensePlate, PersonCheckbox.CheckboxState.Default), "License plate" },
+            {(Person.LieType.LicensePlate, PersonCheckbox.CheckboxState.Decline), "License plates are stolen" },
             {(Person.LieType.LicensePlate, PersonCheckbox.CheckboxState.Approved), "Номера впорядке" },
 
-            {(Person.LieType.Ultraviolet, PersonCheckbox.CheckboxState.Default), "Ультрафиолет" },
-            {(Person.LieType.Ultraviolet, PersonCheckbox.CheckboxState.Decline), "Мистика есть" },
+            {(Person.LieType.Ultraviolet, PersonCheckbox.CheckboxState.Default), "Ultraviolet" },
+            {(Person.LieType.Ultraviolet, PersonCheckbox.CheckboxState.Decline), "Ultraviolet detect something" },
             {(Person.LieType.Ultraviolet, PersonCheckbox.CheckboxState.Approved), "Мистики нет" },
 
-            {(Person.LieType.Contraband, PersonCheckbox.CheckboxState.Default), "Контрабанда" },
-            {(Person.LieType.Contraband, PersonCheckbox.CheckboxState.Decline), "Контрабанда есть" },
+            {(Person.LieType.Contraband, PersonCheckbox.CheckboxState.Default), "Contraband" },
+            {(Person.LieType.Contraband, PersonCheckbox.CheckboxState.Decline), "Contraband here" },
             {(Person.LieType.Contraband, PersonCheckbox.CheckboxState.Approved), "Контрабанды нет" },
 
-            {(Person.LieType.Radiation, PersonCheckbox.CheckboxState.Default), "Радиация" },
-            {(Person.LieType.Radiation, PersonCheckbox.CheckboxState.Decline), "Радиация превышена" },
+            {(Person.LieType.Radiation, PersonCheckbox.CheckboxState.Default), "Radiation" },
+            {(Person.LieType.Radiation, PersonCheckbox.CheckboxState.Decline), "Radiation exceeded" },
             {(Person.LieType.Radiation, PersonCheckbox.CheckboxState.Approved), "Радиация впорядке" },
         };
     }

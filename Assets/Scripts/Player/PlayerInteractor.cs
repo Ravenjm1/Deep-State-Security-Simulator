@@ -54,37 +54,25 @@ public class PlayerInteractor : NetworkBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, _distance, _interact_layers))
         {
             IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
-            OutlineInteract outline = hit.collider.GetComponentInParent<OutlineInteract>();
             if (interactable != null)
             {
                 if (interactable.IsActive())
                 {
                     SetInteractable(interactable);
-                    if (outline != null)
-                    {
-                        SetOutline(outline);
-                    }
-                    else 
-                    {
-                        ResetOutline();
-                    }
                 }
                 else
                 {
                     ResetInteractable();
-                    ResetOutline();
                 }
             }
             else
             {
                 ResetInteractable();
-                ResetOutline();
             }
         }
         else
         {
             ResetInteractable();
-            ResetOutline();
         }
 
         if (Physics.Raycast(ray, out RaycastHit _hit, _distance, _click_layers))
@@ -144,28 +132,15 @@ public class PlayerInteractor : NetworkBehaviour
     {
         if (_interactionObject == null) {
             _interactionObject = _object;
+            _interactionObject.Hover();
         }
     }
 
     private void ResetInteractable()
     {
         if (_interactionObject != null) {
+            _interactionObject.Unhover();
             _interactionObject = null;
-        }
-    }
-
-    private void SetOutline(OutlineInteract _outline)
-    {
-        if (_outlineObject == null) {
-            _outlineObject = _outline;
-            _outlineObject.EnableOutline();
-        }
-    }
-    private void ResetOutline()
-    {
-        if (_outlineObject != null) {
-            _outlineObject.DisableOutline();
-            _outlineObject = null;
         }
     }
 

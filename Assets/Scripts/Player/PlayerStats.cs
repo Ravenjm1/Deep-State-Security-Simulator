@@ -8,16 +8,21 @@ public class PlayerStats : NetworkBehaviour
     public float MaxHp {get; private set; } = 10f;
     public float Hp {get; private set; }
     private PlayerMovement playerMovement;
-    [SyncVar (hook=nameof(OnDeadChange))] public bool IsDead;
+    private PlayerController playerController;
+    [SyncVar] public bool IsDead;
 
     public event Action OnDead = delegate {  };
     public event Action OnResurect = delegate { };
 
-    private float respawnTime = 3;
+    private float respawnTime = 10;
+
+    [SerializeField] private GameObject _corpsePrefab;
+    private GameObject _corpseObj;
 
     void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
+        playerController = GetComponent<PlayerController>();
         Hp = MaxHp;
     }
 
@@ -25,6 +30,7 @@ public class PlayerStats : NetworkBehaviour
     {
         if (!isLocalPlayer)
             return;
+
         if (Input.GetKeyDown(KeyCode.K))
         {
             GetDamage(5);
@@ -33,9 +39,11 @@ public class PlayerStats : NetworkBehaviour
 
     public void GetDamage(float damage)
     {
-        Hp = Math.Max(Hp - damage, 0);
+        if (!isLocalPlayer)
+            return;
 
-        if (Hp == 0)
+        Hp = Mathf.Max(Hp - damage, 0);
+        if (Hp <= 0)
         {
             Die();
         }
@@ -43,23 +51,39 @@ public class PlayerStats : NetworkBehaviour
 
     void Die()
     {
-        if (!IsDead) 
+        if (!IsDead)
         {
+            bool oldDead = IsDead;
             IsDead = true;
+
+            OnDead();
+
+            AlertDie();
+
             StartCoroutine(Respawn());
         }
     }
-    // For all clients
-    void OnDeadChange(bool oldDead, bool newDead)
+
+    [Command]
+    void AlertDie()
     {
-        if (newDead) 
-        {
-            OnDead();
-        }
-        else
-        {
-            OnResurect();
-        }
+        _corpseObj = Instantiate(_corpsePrefab, playerController.Model.transform.position, Quaternion.identity);
+        NetworkServer.Spawn(_corpseObj);
+
+        RpcSetVisibilityModel(false);
+    }
+
+    [Command]
+    void AlertResurect()
+    {
+        RpcSetVisibilityModel(true);
+    }
+
+    [ClientRpc]
+    void RpcSetVisibilityModel(bool isVisible)
+    {
+        if (!isLocalPlayer)
+            playerController.Model.SetActive(isVisible); 
     }
 
     IEnumerator Respawn()
@@ -75,6 +99,9 @@ public class PlayerStats : NetworkBehaviour
         {
             Hp = MaxHp;
             IsDead = false;
+            OnResurect();
+
+            AlertResurect();
         }
     }
 }

@@ -5,13 +5,15 @@ using UnityEngine;
 public class Driver : NetworkBehaviour, IInteractable
 {
     private Car car;
-    private bool gave;
+    [SyncVar] private bool gave;
     [SyncVar (hook=nameof(OnIdCardSet))] GrabObject idCard;
     [SerializeField] private Transform _hand;
+    private OutlineInteract _outline;
 
     void Awake()
     {
         car = GetComponentInParent<Car>();
+        _outline = gameObject.AddComponent<OutlineInteract>();
     }
     [Server]
     void Start()
@@ -28,34 +30,47 @@ public class Driver : NetworkBehaviour, IInteractable
     public string GetInteractText() => !gave? "Take Id card" : "Give back";
     public void Interact()
     {
-        CmdGiveIdCard(NetworkClient.localPlayer);
+        if (!gave)
+        {
+            CmdGiveIdCard(NetworkClient.localPlayer);
+        }
+        else
+        {
+            var playerInventory = NetworkClient.localPlayer.GetComponentInChildren<PlayerInventory>();
+            if (CheckItem(NetworkClient.localPlayer))
+            {
+                playerInventory.DropItem(0);
+                CmdGrabNpc();
+            }
+        }
     }
 
     [Command (requiresAuthority = false)]
     void CmdGiveIdCard(NetworkIdentity player)
     {
-        if (!gave)
-        {
-            gave = true;
-            idCard.Drop();
-            idCard.CmdGrab(player);
-        }
-        else
-        {
-            var playerInventory = player.GetComponentInChildren<PlayerInventory>();
-            if (CheckItem(player))
-            {
-                playerInventory.DropItem(0);
-                StartCoroutine(WaitToGrabNpc());
-            }
-        }
+        gave = true;
+        StartCoroutine(DropAndGrab(player));
     }
 
+    IEnumerator DropAndGrab(NetworkIdentity player)
+    {
+        idCard.Drop();
+        while (idCard.IsGrabbed)
+            yield return null;
+        idCard.CmdGrab(player);
+    }
+
+    [Command (requiresAuthority = false)]
+    void CmdGrabNpc()
+    {
+        gave = false;
+        StartCoroutine(WaitToGrabNpc());
+    }
     IEnumerator WaitToGrabNpc()
     {
-        yield return new WaitForSeconds(0.1f);
+        while (idCard.IsGrabbed)
+            yield return null;
         idCard.GrabNpc(_hand);
-        gave = false;
     }
 
     bool CheckItem(NetworkIdentity player)
@@ -66,4 +81,6 @@ public class Driver : NetworkBehaviour, IInteractable
         return itemSlot != null && itemSlot == idCard;
     }
     
+    public void Hover() => _outline.EnableOutline();
+    public void Unhover() => _outline.DisableOutline();
 }

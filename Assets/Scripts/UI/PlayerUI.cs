@@ -3,12 +3,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 public class PlayerUI : MonoBehaviour
 {
-    public TMP_Text textRight;
-    public TMP_Text textFailed;
-    [SerializeField] private TMP_Text textGoldChange;
+    [SerializeField] private GameObject _bannerRight;
+    [SerializeField] private GameObject _bannerFailed;
+    [SerializeField] private GameObject _bannerGoldChange;
+    private TMP_Text _textGoldChange;
 
     // Инвентарь
     PlayerInventory playerInventory;
@@ -28,6 +30,7 @@ public class PlayerUI : MonoBehaviour
     {
         playerStats = LocationContext.GetDependency.Player.Stats;
         playerInventory = playerStats.GetComponentInChildren<PlayerInventory>();
+        _textGoldChange = _bannerGoldChange.GetComponentInChildren<TMP_Text>();
     }
 
     public void ShowResult(bool result, string goldText, string badText)
@@ -36,15 +39,21 @@ public class PlayerUI : MonoBehaviour
         showResult = true;
         if (result) 
         {
-            textRight.gameObject.SetActive(true);
+            _bannerRight.SetActive(true);
+            SetAlpha(_bannerRight, 1f);
         }
         else 
         {
-            textFailed.gameObject.SetActive(true);
-            textFailed.text = "You Failed" + "\n" + badText;
+            _bannerFailed.gameObject.SetActive(true);
+            SetAlpha(_bannerFailed, 1f);
         }
-        textGoldChange.gameObject.SetActive(true);
-        textGoldChange.text = goldText;
+
+        if (goldText != "") 
+        {
+            _bannerGoldChange.SetActive(true);
+            SetAlpha(_bannerGoldChange, 1f);
+            _textGoldChange.text = goldText;
+        }
     }
 
     void Update() 
@@ -56,9 +65,11 @@ public class PlayerUI : MonoBehaviour
             if (timeShow <= 0f)
             {
                 showResult = false;
-                textRight.gameObject.SetActive(false);
-                textFailed.gameObject.SetActive(false);
-                textGoldChange.gameObject.SetActive(false);
+
+                StartCoroutine(FadeOutRoutine(_bannerRight, 1f));
+                StartCoroutine(FadeOutRoutine(_bannerFailed, 1f));
+
+                StartCoroutine(FadeOutRoutine(_bannerGoldChange, 6f));
             }
         }
 
@@ -102,6 +113,78 @@ public class PlayerUI : MonoBehaviour
             else
             {
                 items[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private IEnumerator FadeOutRoutine(GameObject _object, float fadeDuration)
+    {
+        // Получаем всех дочерних компонентов Image и TextMeshPro
+        Image[] images = _object.GetComponentsInChildren<Image>();
+        TextMeshProUGUI[] texts = _object.GetComponentsInChildren<TextMeshProUGUI>();
+
+        // Начальное значение альфа (1.0 - полностью видно)
+        float startAlpha = 1f;
+
+        // Время, прошедшее с начала анимации
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(startAlpha, 0f, elapsed / fadeDuration); // Плавное уменьшение альфа
+
+            // Устанавливаем альфа для всех Image
+            foreach (var image in images)
+            {
+                if (image != null)
+                {
+                    Color color = image.color;
+                    color.a = alpha;
+                    image.color = color;
+                }
+            }
+
+            // Устанавливаем альфа для всех TextMeshPro
+            foreach (var text in texts)
+            {
+                if (text != null)
+                {
+                    Color color = text.color;
+                    color.a = alpha;
+                    text.color = color;
+                }
+            }
+
+            yield return null; // Ждём следующий кадр
+        }
+        _object.SetActive(false);
+    }
+
+    void SetAlpha(GameObject _object, float alpha)
+    {
+        // Получаем всех дочерних компонентов Image и TextMeshPro
+        Image[] images = _object.GetComponentsInChildren<Image>();
+        TextMeshProUGUI[] texts = _object.GetComponentsInChildren<TextMeshProUGUI>();
+
+        // Убедимся, что альфа точно 0 после завершения
+        foreach (var image in images)
+        {
+            if (image != null)
+            {
+                Color color = image.color;
+                color.a = alpha;
+                image.color = color;
+            }
+        }
+
+        foreach (var text in texts)
+        {
+            if (text != null)
+            {
+                Color color = text.color;
+                color.a = alpha;
+                text.color = color;
             }
         }
     }

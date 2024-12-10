@@ -56,7 +56,7 @@ public class LocationManager : NetworkBehaviour
         {
             time = Mathf.Max(time - Time.deltaTime, 0f);
         }
-        visualTime = Math.Abs(time - visualTime) >= 5? time : visualTime;
+        visualTime = (Math.Abs(time - visualTime) >= 5 || time == 0)? time : visualTime;
         timeText.text = string.Format("{0}:{1:00}", (int)(visualTime / 60), (int)(visualTime % 60));
         quotaText.text = gold + " / " + quota;
     }
@@ -79,6 +79,8 @@ public class LocationManager : NetworkBehaviour
     [Server]
     public void Result(bool result, Person person)
     {
+        ShowResult(result, person);
+
         if (time > 0)
         {
             carSpawner.SpawnCar();
@@ -88,8 +90,6 @@ public class LocationManager : NetworkBehaviour
         {
             EndDay();
         }
-
-        ShowResult(result, person);
     }
 
     void ShowResult(bool result, Person person)
@@ -99,11 +99,11 @@ public class LocationManager : NetworkBehaviour
 
         var badDict = new Dictionary<Person.LieType, string>()
         {
-            { Person.LieType.IdCard, "Айди Карта фейковая!" },
-            { Person.LieType.LicensePlate, "Номера машины угнаны!" },
-            { Person.LieType.Ultraviolet, "Мистика на машине!" },
-            { Person.LieType.Contraband, "Контрабанда!" },
-            { Person.LieType.Radiation, "Радиация превышена!" },
+            { Person.LieType.IdCard, "Id card is fake!" },
+            { Person.LieType.LicensePlate, "license plates are stolen!" },
+            { Person.LieType.Ultraviolet, "Mystiks!" },
+            { Person.LieType.Contraband, "Contraband!" },
+            { Person.LieType.Radiation, "Rdiation exceeded!" },
         };
 
         if (result)
@@ -136,23 +136,25 @@ public class LocationManager : NetworkBehaviour
             bool isLieType = person.lierTypes.Contains(checkbox.type);
             string label = checkbox.label;
 
+            Debug.Log("checkbox: " + checkbox.CurrentState);
+
             if (checkbox.CurrentState == PersonCheckbox.CheckboxState.Decline)
             {
                 if (isLieType)
                 {
                     AddGold(10);
-                    showText += "\n+ 10: " + label;
+                    showText += label + " +10\n";
                 }
                 else
                 {
                     ReduceGold(5);
-                    showText += "\n- 5: " + label;
+                    showText += label + " -5\n";
                 }
             }
             else if (checkbox.CurrentState == PersonCheckbox.CheckboxState.Default && isLieType)
             {
                 ReduceGold(5);
-                showText += "\n- 5: " + label;
+                showText += label + " -5\n";
             }
         }
 

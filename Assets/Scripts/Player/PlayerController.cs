@@ -10,8 +10,6 @@ public class PlayerController : NetworkBehaviour
     [field: SerializeField] public PlayerHands Hands { get; private set; }
     [field: SerializeField] public GameObject Model { get; private set; }
     [field: SerializeField] public TMP_Text TmpNickname { get; private set; }
-    [SerializeField] private GameObject _corpsePrefab;
-    private GameObject _corpseObj;
     private Animator animator;
 
     private CameraManager cameraManager;
@@ -39,7 +37,6 @@ public class PlayerController : NetworkBehaviour
         animator = GetComponentInChildren<Animator>();
 
         cameraManager = FindAnyObjectByType<CameraManager>();
-        cameraManager.AssignCameraFollow(this);
     }
 
     public override void OnStartLocalPlayer()
@@ -47,17 +44,18 @@ public class PlayerController : NetworkBehaviour
         base.OnStartLocalPlayer();
 
         Model.SetActive(false);
+        
         currentState = State.Base;
+        EnterBaseState();
 
         // Проверяем, инициализирован ли Steam API
         if (SteamManager.Initialized)
         {
             nickname = SteamFriends.GetPersonaName();
         }
-    }
 
-    void Start()
-    {
+        cameraManager.AssignCameraFollow(this);
+
         Stats.OnDead += OnDead;
         Stats.OnResurect += OnResurect;
     }
@@ -82,40 +80,26 @@ public class PlayerController : NetworkBehaviour
         else
         {
             TmpNickname.text = nickname;
+
+            // Направляем ник в сторону игрока.
+            Vector3 direction = NetworkClient.localPlayer.transform.position - TmpNickname.transform.position;
+            Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
+
+            // Добавляем поворот на 180 градусов по оси Y.
+            rotation *= Quaternion.Euler(0, 180, 0);
+
+            TmpNickname.transform.rotation = rotation;
         }
     }
 
     private void OnDead()
     {
-        if (isLocalPlayer)
-        {
-            SwitchToDeadState();
-        }
-        else 
-        {
-            Model.SetActive(false); 
-        }
-        if (isServer)
-        {
-            _corpseObj = Instantiate(_corpsePrefab, Model.transform.position, Quaternion.identity);
-            NetworkServer.Spawn(_corpseObj);
-        }
+        SwitchToDeadState();
     }
 
     private void OnResurect()
     {
-        if (isLocalPlayer)
-        {
-            SwitchToBaseState();
-        }
-        else
-        {
-            Model.SetActive(true);
-        }
-        if (isServer)
-        {
-            NetworkServer.Destroy(_corpseObj);
-        }
+        SwitchToBaseState();
     }
 
     public void SwitchToBaseState()
