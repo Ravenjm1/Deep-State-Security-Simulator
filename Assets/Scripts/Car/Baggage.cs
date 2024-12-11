@@ -40,7 +40,14 @@ public class Baggage : NetworkBehaviour
     // Этот метод вызывается автоматически при изменении SyncVar
     void OnColorChanged(Color oldColor, Color newColor)
     {
-        GetComponent<Renderer>().material.color = newColor;
+        Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+        foreach (var render in renderers)
+        {
+            if (render != null)
+            {
+                render.material.color = newColor;
+            }
+        }
     }
 
     void OnPositionChanged(Vector3 oldPos, Vector3 newPos)

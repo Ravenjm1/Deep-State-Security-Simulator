@@ -25,7 +25,7 @@ public class PlayerHands : NetworkBehaviour
         if (!isLocalPlayer)
             return;
         transform.rotation = Quaternion.Slerp(transform.rotation,
-            _followTarget.rotation * Quaternion.Euler(0f, 30f * _watchOffset, 0f), Time.deltaTime * 20f);
+            _followTarget.rotation * Quaternion.Euler(0f, 30 /** _watchOffset*/, 0f), Time.deltaTime * 20f);
 
         SetWatching();
     }

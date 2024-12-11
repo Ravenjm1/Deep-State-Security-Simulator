@@ -97,7 +97,7 @@ public class GrabObject : NetworkBehaviour, IInteractable
         grabberHands = grabTransform;
         transform.SetParent(grabberHands);
         transform.localPosition = Vector3.zero; // Устанавливаем начальное положение
-        transform.localRotation = Quaternion.Euler(0, 180, 0);
+        transform.localRotation = Quaternion.Euler(0, 150 /*180*/, 0);
     }
 
     public void GrabNpc(Transform grabTransform)

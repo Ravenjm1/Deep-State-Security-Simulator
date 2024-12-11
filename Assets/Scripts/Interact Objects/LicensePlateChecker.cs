@@ -58,16 +58,16 @@ public class LicensePlateChecker : MonoBehaviour
 
             if (findPlate.lierTypes.Contains(Person.LieType.LicensePlate))
             {
-                resultText.text = "Номера фейк!";
+                resultText.text = "stolen numbers!";
             }
             else
             {
-                resultText.text = "Номера верные";
+                resultText.text = "numbers fine";
             }
         }
         else
         {
-            resultText.text = "Неизвестный номер";
+            resultText.text = "unknown number";
         }
     }
 
