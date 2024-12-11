@@ -179,6 +179,8 @@ public class PlayerInteractor : NetworkBehaviour
     {
         if (_clickableObject != null) {
             _clickableObject.Unhover();
+            if (_clickableObject.IsPressed())
+                _clickableObject.Released();
             _clickableObject = null;
         }
     }
