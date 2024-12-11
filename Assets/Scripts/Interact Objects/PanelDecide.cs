@@ -11,11 +11,13 @@ public class PanelDecide : NetworkBehaviour
     [SerializeField] GameObject _explosionPrefab;
     CarSpawner carSpawner; // Ссылка на CarSpawner
     private Object[] walls;
+    private GarageDoor _garageDoor;
     void Awake()
     {
         carSpawner = GetComponent<CarSpawner>();
 
         walls = FindObjectsByType(typeof(ModularWall), FindObjectsSortMode.None);
+        _garageDoor = FindFirstObjectByType<GarageDoor>();
     }
 
     // Вызывается при нажатии кнопки "Пропустить"
@@ -37,8 +39,22 @@ public class PanelDecide : NetworkBehaviour
     {
         if (carSpawner != null)
         {
+            OpenGarageDoor();
             carSpawner.CurrentCarPass();
         }
+    }
+
+    [Server]
+    void OpenGarageDoor()
+    {
+        _garageDoor.Open();
+        StartCoroutine(CloseGarageDoor());
+    }
+
+    IEnumerator CloseGarageDoor()
+    {
+        yield return new WaitForSeconds(5f);
+        _garageDoor.Close();
     }
 
     // Команда на сервер для обработки "Отказа"
