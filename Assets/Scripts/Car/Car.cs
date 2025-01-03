@@ -23,6 +23,7 @@ public class Car : NetworkBehaviour
     [SerializeField] private TMP_Text textLicensePlate;
     [SerializeField] private UltravioletObject ultravialetObject;
     [SerializeField] private List<Transform> contrabandSpawnPoints;
+    [SerializeField] private GameObject _idCardPrefab;
 
     private Vector3 cancelPoint = new Vector3(-10f, 0, 0);
     private Vector3 passPoint = new Vector3(20f, 0, 0);
@@ -43,48 +44,52 @@ public class Car : NetworkBehaviour
     void Awake()
     {
         driver = GetComponentInChildren<Driver>();
-    }
-    void Start()
-    {
         _explosion = GetComponent<CarExplosion>();
-        personGenerator = FindFirstObjectByType<PersonGenerator>();
+    }
 
-        if (isServer)
+    public void SetPerson(Person person) 
+    {
+        this.person = person;
+    }
+
+    [Server]
+    public void Init()
+    {
+        Debug.Log("pers: " + person);
+        if (person.hasCargo)
         {
-            person = personGenerator.GetPerson();
-            if (person.hasCargo)
+            for (int i = 0; i < 4; i++)
             {
-                for (int i = 0; i < 4; i++)
-                {
-                    var itemObj = Instantiate(itemPrefab, itemSpawner);
-                    Vector3 randomPosition = new Vector3(
-                        Random.Range(-1f, 1f), 
-                        Random.Range(0f, 0.3f),
-                        Random.Range(-0.6f, 0.6f)
-                    );
+                var itemObj = Instantiate(itemPrefab, itemSpawner);
+                Vector3 randomPosition = new Vector3(
+                    Random.Range(-1f, 1f), 
+                    Random.Range(0f, 0.3f),
+                    Random.Range(-0.6f, 0.6f)
+                );
 
-                    var _color = Color.gray;
-                    if (person.isRad)
-                        _color = Color.green;
+                var _color = Color.gray;
+                if (person.isRad)
+                    _color = Color.green;
 
-                    var bagComp = itemObj.GetComponent<Baggage>();
-                    bagComp.SetColor(_color);
-                    bagComp.SetPositon(randomPosition);
-                    bagComp.radiation = person.radiation;
+                var bagComp = itemObj.GetComponent<Baggage>();
+                bagComp.SetColor(_color);
+                bagComp.SetPositon(randomPosition);
+                bagComp.radiation = person.radiation;
 
-                    NetworkServer.Spawn(itemObj);
-                }
-            }
-            if (person.contraband)
-            {
-                var contrabandTransform = contrabandSpawnPoints[Random.Range(0, contrabandSpawnPoints.Count - 1)];
-                var contrabandObj = Instantiate(itemPrefab, contrabandTransform);
-                var bagComp = contrabandObj.GetComponent<Baggage>();
-                bagComp.SetColor(Color.red);
-
-                NetworkServer.Spawn(contrabandObj);
+                NetworkServer.Spawn(itemObj);
             }
         }
+        if (person.contraband)
+        {
+            var contrabandTransform = contrabandSpawnPoints[Random.Range(0, contrabandSpawnPoints.Count - 1)];
+            var contrabandObj = Instantiate(itemPrefab, contrabandTransform);
+            var bagComp = contrabandObj.GetComponent<Baggage>();
+            bagComp.SetColor(Color.red);
+
+            NetworkServer.Spawn(contrabandObj);
+        }
+        SpawnIdCard();
+        driver.SetIdCard(idCard.GetComponent<GrabObject>());
     }
 
     public Person GetPerson() => person;
@@ -138,19 +143,17 @@ public class Car : NetworkBehaviour
         }
     }
     [Server]
-    public GameObject SpawnIdCard()
+    public void SpawnIdCard()
     {
         // Создаем объект idCard
-        idCard = Instantiate(personGenerator.IdCardPrefab, driver.transform);
+        idCard = Instantiate(_idCardPrefab, driver.transform);
 
         // Получаем компонент Personality и устанавливаем данные Person
         Personality personality = idCard.GetComponent<Personality>();
+        Debug.Log("SpawnIdCard pers: " + person.name);
         personality.InitializePerson(person);
-
         // Спавним объект
         NetworkServer.Spawn(idCard);
-
-        return idCard;
     }
 
     private IEnumerator ChanceToSpawnEnemy()

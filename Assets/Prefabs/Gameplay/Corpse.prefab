@@ -282,6 +282,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -7657966619581158213, guid: 24de9b3cb58793d43a58999b08e4259a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7899769124265300664}
+    - targetCorrespondingSourceObject: {fileID: -7657966619581158213, guid: 24de9b3cb58793d43a58999b08e4259a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5116923108441091482}
     - targetCorrespondingSourceObject: {fileID: 8817898888258712963, guid: 24de9b3cb58793d43a58999b08e4259a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7997819195835813283}
@@ -1248,6 +1251,41 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &5116923108441091482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7366920897452857292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b20dc110904e47f8a154cdcf6433eae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 8363000983298104476}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  sendIntervalMultiplier: 1
+  timelineOffset: 0
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  changedDetection: 1
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
 --- !u!1 &8186068659821476145 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -9070493210130169274, guid: 24de9b3cb58793d43a58999b08e4259a, type: 3}
@@ -1349,6 +1387,11 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!4 &8363000983298104476 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 24de9b3cb58793d43a58999b08e4259a, type: 3}
+  m_PrefabInstance: {fileID: 8324306226481773431}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8971417796691387773 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1082271958561512970, guid: 24de9b3cb58793d43a58999b08e4259a, type: 3}

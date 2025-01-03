@@ -14,6 +14,7 @@ public class Personality : NetworkBehaviour
     // Метод для инициализации объекта на сервере
     public void InitializePerson(Person person)
     {
+        Debug.Log("InitializePerson: " + person);
         this.person = person;
         AddPersonality(person);
         Debug.Log("lie types: " + string.Join(", ", person.lierTypes));

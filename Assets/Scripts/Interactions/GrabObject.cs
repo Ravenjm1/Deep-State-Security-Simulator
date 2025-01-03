@@ -99,7 +99,7 @@ public class GrabObject : NetworkBehaviour, IInteractable
         transform.localPosition = Vector3.zero; // Устанавливаем начальное положение
         transform.localRotation = Quaternion.Euler(0, 150 /*180*/, 0);
     }
-
+    [Server]
     public void GrabNpc(Transform grabTransform)
     {
         if (!_isGrabbed)
@@ -109,9 +109,14 @@ public class GrabObject : NetworkBehaviour, IInteractable
                 _rigidbody.isKinematic = true;
                 _boxCollider.enabled = false;
             }
-            SetGrabbed(grabTransform);
+            RpcGrabNpc(grabTransform);
         }
     }
+    [ClientRpc]
+    void RpcGrabNpc(Transform grabTransform)
+    {
+        SetGrabbed(grabTransform);
+    }   
 
     public void Drop()
     {

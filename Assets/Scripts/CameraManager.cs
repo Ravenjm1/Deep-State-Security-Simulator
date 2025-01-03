@@ -42,6 +42,7 @@ public class CameraManager : MonoBehaviour
     void SwitchToFollow()
     {
         followCamera.Priority = 20;
+        /*
         foreach (var player in LocationContext.GetDependency.ListPlayers)
         {
             if (!player.GetComponent<PlayerStats>().IsDead)
@@ -49,7 +50,7 @@ public class CameraManager : MonoBehaviour
                 followCamera.Follow = player.transform;
                 return;
             }
-        }
+        }*/
     }
     void SwitchToPov()
     {

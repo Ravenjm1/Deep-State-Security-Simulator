@@ -12,7 +12,7 @@ public class LocationManager : NetworkBehaviour
     [SerializeField] private PlayerUI controllerGUI;
     [SerializeField] private CheckboxListManager checkboxListManager;
     [SerializeField] private CarSpawner carSpawner;
-    private float setTime = 360;
+    private float setTime = 600;
     private float timeToSpawnCar = 1f;
     private float visualTime = 0;
     [SyncVar] private float time = 0;
@@ -33,6 +33,16 @@ public class LocationManager : NetworkBehaviour
         }
         time = setTime;
         visualTime = time;
+        StartCoroutine(WaitToCar());
+    }
+
+    IEnumerator WaitToCar() 
+    {
+        yield return null;
+        SpawnCar();
+    }
+    void SpawnCar()
+    {
         carSpawner.SpawnCar();
         checkboxListManager.InitCheckboxes();
     }
@@ -83,8 +93,7 @@ public class LocationManager : NetworkBehaviour
 
         if (time > 0)
         {
-            carSpawner.SpawnCar();
-            checkboxListManager.InitCheckboxes();
+            SpawnCar();
         }
         else 
         {

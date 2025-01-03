@@ -31,6 +31,9 @@ public class SteamLobby : MonoBehaviour
         joinRequest = Callback<GameLobbyJoinRequested_t>.Create(OnJoinRequest);
         lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
 
+        SteamMatchmaking.LeaveLobby(SteamUser.GetSteamID());
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         Debug.Log("Steam Lobby Manager Initialized");
 
         DontDestroyOnLoad(gameObject);
@@ -65,6 +68,15 @@ public class SteamLobby : MonoBehaviour
         networkManager.StartHost();
 
         Debug.Log("Lobby created successfully.");
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "MenuScene")
+        {
+            // Оставляем старое лобби, если оно существует
+            SteamMatchmaking.LeaveLobby(SteamUser.GetSteamID());
+        }
     }
 
     private void OnJoinRequest(GameLobbyJoinRequested_t callback)

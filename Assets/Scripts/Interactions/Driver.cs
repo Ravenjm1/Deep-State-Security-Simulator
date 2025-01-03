@@ -4,27 +4,22 @@ using UnityEngine;
 
 public class Driver : NetworkBehaviour, IInteractable
 {
-    private Car car;
     [SyncVar] private bool gave;
-    [SyncVar (hook=nameof(OnIdCardSet))] GrabObject idCard;
+    [SyncVar] GrabObject idCard;
     [SerializeField] private Transform _hand;
     private OutlineInteract _outline;
 
     void Awake()
     {
-        car = GetComponentInParent<Car>();
         _outline = gameObject.AddComponent<OutlineInteract>();
     }
-    [Server]
-    void Start()
-    {
-        idCard = car.SpawnIdCard().GetComponent<GrabObject>();
-    }
 
-    void OnIdCardSet(GrabObject oldVar, GrabObject newidCard)
+    public void SetIdCard(GrabObject grabObject)
     {
-        newidCard.GrabNpc(_hand);
-    }
+        idCard = grabObject;
+        idCard.GrabNpc(_hand);
+        Debug.Log("id card: " + idCard);
+    } 
 
     public bool IsActive() => (!gave || CheckItem(NetworkClient.localPlayer))? true : false;
     public string GetInteractText() => !gave? "Take Id card" : "Give back";

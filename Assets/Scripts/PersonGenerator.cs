@@ -9,7 +9,6 @@ public class PersonGenerator : NetworkBehaviour
 {
     public GameObject personIdPrefab;
     public RectTransform sheetCanvas;
-    public GameObject IdCardPrefab;
     Vector2 startPos = new Vector2(-50f, 35f);
     Vector2 offset_y = new Vector2(0, -25f);
     Vector2 offset_x = new Vector2(100f, 0);

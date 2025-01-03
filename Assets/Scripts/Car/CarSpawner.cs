@@ -10,24 +10,32 @@ public class CarSpawner : NetworkBehaviour
     public Transform spawnPoint;
     [SerializeField] LocationManager locationManager;
     [SerializeField] BoxCollider explosionCollider;
+    [SerializeField] PersonGenerator personGenerator;
 
-    [NonSerialized] public GameObject currentCar;
+    [NonSerialized] public GameObject currentCarObject;
+    private Car currentCar;
 
     [Server]
     public void SpawnCar()
     {
-        if (currentCar == null) 
+        if (currentCarObject == null) 
         {
-            currentCar = Instantiate(carPrefab, spawnPoint.position, Quaternion.identity);
-            NetworkServer.Spawn(currentCar); // Синхронизируем спавн машины для всех игроков
-            currentCar.GetComponent<Car>().spawner = this;
+            currentCarObject = Instantiate(carPrefab, spawnPoint.position, Quaternion.identity);
+            NetworkServer.Spawn(currentCarObject); // Синхронизируем спавн машины для всех игроков
+
+            currentCar = currentCarObject.GetComponent<Car>();
+            currentCar.spawner = this;
+            var _person = personGenerator.GetPerson();
+            Debug.Log(_person);
+            currentCar.SetPerson(_person);
+            currentCar.Init();
         }
     }
 
     [Server]
     public void RemoveCar()
     {
-        var carController = currentCar.GetComponent<Car>();
+        var carController = currentCarObject.GetComponent<Car>();
         var person = GetPerson();
         
         // Логика определения результата
@@ -35,10 +43,10 @@ public class CarSpawner : NetworkBehaviour
 
         // Удаление объектов через NetworkServer
         NetworkServer.Destroy(carController.idCard);
-        NetworkServer.Destroy(currentCar);
+        NetworkServer.Destroy(currentCarObject);
         
         // Сброс текущей машины
-        currentCar = null;
+        currentCarObject = null;
 
         // Отправка результата в LocationManager
         locationManager.Result(result, person);
@@ -46,18 +54,18 @@ public class CarSpawner : NetworkBehaviour
 
     public GameObject GetCar()
     {
-        return currentCar;
+        return currentCarObject;
     }
 
-    public Person GetPerson() => currentCar.GetComponent<Car>().GetPerson();
+    public Person GetPerson() => currentCarObject.GetComponent<Car>().GetPerson();
 
     // Метод для обработки "Пропуска"
     [Server]
     public void CurrentCarPass()
     {
-        if (currentCar != null)
+        if (currentCarObject != null)
         {
-            var carController = currentCar.GetComponent<Car>();
+            var carController = currentCarObject.GetComponent<Car>();
             if (carController != null)
             {
                 Debug.Log("CurrentCarPass");
@@ -72,9 +80,9 @@ public class CarSpawner : NetworkBehaviour
     {
         RpcExplosion();
 
-        if (currentCar != null)
+        if (currentCarObject != null)
         {
-            var carController = currentCar.GetComponent<Car>();
+            var carController = currentCarObject.GetComponent<Car>();
             carController.CmdReject(); // Машина взрывается
         }
     }
@@ -114,9 +122,9 @@ public class CarSpawner : NetworkBehaviour
     [Command (requiresAuthority = false)]
     void CmdAllowToCome()
     {
-        if (currentCar != null)
+        if (currentCarObject != null)
         {
-            currentCar.GetComponent<Car>().AllowToCome();
+            currentCarObject.GetComponent<Car>().AllowToCome();
         }
     }
 }

@@ -11,13 +11,12 @@ public class PanelDecide : NetworkBehaviour
     [SerializeField] GameObject _explosionPrefab;
     CarSpawner carSpawner; // Ссылка на CarSpawner
     private Object[] walls;
-    private GarageDoor _garageDoor;
+    [SerializeField] private GarageDoor _garageDoor;
     void Awake()
     {
         carSpawner = GetComponent<CarSpawner>();
 
         walls = FindObjectsByType(typeof(ModularWall), FindObjectsSortMode.None);
-        _garageDoor = FindFirstObjectByType<GarageDoor>();
     }
 
     // Вызывается при нажатии кнопки "Пропустить"
